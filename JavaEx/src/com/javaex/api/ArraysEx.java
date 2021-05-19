@@ -1,12 +1,80 @@
 package com.javaex.api;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class ArraysEx {
     //배열을 조작하는데 도움을 주는 클래스
 	public static void main(String[] args) {
-		arrayCopyEx();
+		//arrayCopyEx();
+		basicSortAsc();
+		//basicSortDesc();
+		//customClassSort();
+		//basicSearch();
+		//customClassSearch();
 
+	}
+	//사용자 정의 클래스의 검색
+	private static void customClassSearch() {
+		Member[] members= {new Member("홍길동"),new Member("장길산"),new Member("전우치")};
+		Arrays.sort(members); //Comparable 인터페이스 구현
+		System.out.println("원본:"+Arrays.toString(members));
+		int index=Arrays.binarySearch(members, new Member("홍길동"),new Comparator<Member>() {
+			@Override
+			public int compare(Member o1,Member o2) {
+				return o1.name.compareTo(o2.name);
+			}
+			
+		});
+		System.out.println("홍길동 검색:"+index);
+	}
+	private static void basicSearch() {
+		//Java의 기본 검색 방식은 binarySearch
+		//검색 이전에 반드시 정렬이 되어 있어야 한다
+		int[] nums= {5,8,1,3,6,9,10,5,8,2};
+		System.out.println("원본:"+Arrays.toString(nums));
+		Arrays.sort(nums);
+		System.out.println("정렬:"+Arrays.toString(nums));
+		
+		int index=Arrays.binarySearch(nums, 9);
+		System.out.println("9의 인덱스:"+index);
+		
+		String[] words= {"Java","C","C++","Python","Linux"};
+		System.out.println("원본:"+Arrays.toString(words));
+		Arrays.sort(words);
+		System.out.println("정렬:"+Arrays.toString(words));
+		
+		index=Arrays.binarySearch(words, "Java");
+		System.out.println("Java의 인덱스: "+index);
+		
+	}
+	
+	//사용자 정의 클래스의 정렬
+	private static void customClassSort() {
+		Member[] members= { new Member("홍길동"),new Member("장길산"),new Member("전우치")};
+		System.out.println("원본 배열:"+Arrays.toString(members));
+		Arrays.sort(members);
+		System.out.println("정렬:"+Arrays.toString(members));
+		Arrays.sort(members,Collections.reverseOrder());
+		System.out.println("역순정렬:"+Arrays.toString(members));
+	}
+	//기본 자료형의 오름차순 정렬
+	private static void basicSortAsc() {
+		//ascending(오름차순)
+		int[] scores= {80,50,30,90,75,88,77};
+		System.out.println("원본:"+Arrays.toString(scores));
+		Arrays.sort(scores); //정렬
+		System.out.println("오름차순 정렬:"+Arrays.toString(scores));
+	}
+	//기본 자료형의 내림차순 정렬
+	private static void basicSortDesc() {
+	//descending(내림차순)
+		Integer[] scores= {80,50,30,90,75,88,77};
+		System.out.println("원본:"+Arrays.toString(scores));
+		//역순 정렬
+		Arrays.sort(scores,Collections.reverseOrder());
+		System.out.println("내림차순 정렬:"+Arrays.toString(scores));
 	}
 	
 	//배열 복사
