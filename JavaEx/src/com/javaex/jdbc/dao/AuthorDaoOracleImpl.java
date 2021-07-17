@@ -46,8 +46,55 @@ public class AuthorDaoOracleImpl implements AuthorDao {
 			}
 		}catch(SQLException e) {
 			e.printStackTrace();
+		}finally {
+			try {
+				rs.close();
+				stmt.close();
+			}catch(Exception e) {
+				
+			}
 		}
 		return list;
+	}
+	@Override
+	public List<AuthorVo> search(String keyword){
+		List<AuthorVo>list=new ArrayList<>();
+		Connection conn=null;
+		PreparedStatement pstmt=null;
+		ResultSet rs=null;
+		try {
+			conn=getConnection();
+			String sql="SELECT id, name, bio FROM author WHERE name LIKE ?";
+			pstmt=conn.prepareStatement(sql);
+			pstmt.setString(1,"%"+keyword+"%");
+			
+			rs=pstmt.executeQuery();
+			while(rs.next()) {
+				AuthorVo vo=new AuthorVo();
+				vo.setId(rs.getLong(1));
+				vo.setName(rs.getString(2));
+				vo.setBio(rs.getString(3));
+				
+				list.add(vo);
+			}
+			
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				rs.close();
+				pstmt.close();
+				conn.close();
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+			
+		}
+		return list;
+	}
+	@Override
+	public AuthorVo get(Long id) {
+		return null;
 	}
 	@Override
 	public boolean insert(AuthorVo vo){
@@ -57,9 +104,10 @@ public class AuthorDaoOracleImpl implements AuthorDao {
 		String sql="INSERT INTO author VALUES(seq_author.NEXTVAL,?,?)";
 		//실행계획
 		int insertedCount=0;
+		PreparedStatement pstmt=null;
         try {
         	conn=getConnection();
-        	PreparedStatement pstmt=conn.prepareStatement(sql);
+        	pstmt=conn.prepareStatement(sql);
         	//파라미터 연결
         	pstmt.setString(1,vo.getName());
         	pstmt.setString(2, vo.getBio());
@@ -67,6 +115,11 @@ public class AuthorDaoOracleImpl implements AuthorDao {
         	insertedCount=pstmt.executeUpdate();
         }catch(SQLException e) {
         	e.printStackTrace();
+        }finally {
+        	try {
+        		pstmt.close();
+        		conn.close();
+        	}catch(Exception e) {}
         }
         return insertedCount==1;
         //INSERT 문장의 성공 여부
@@ -90,6 +143,11 @@ public class AuthorDaoOracleImpl implements AuthorDao {
 			            updatedCount=pstmt.executeUpdate();
 		}catch(SQLException e) {
 			e.printStackTrace();
+		}finally {
+			try {
+				pstmt.close();
+				conn.close();
+			}catch(Exception e) {}
 		}
 		return updatedCount==1;
 	}
@@ -110,6 +168,11 @@ public class AuthorDaoOracleImpl implements AuthorDao {
 			deletedCount=pstmt.executeUpdate();
 		}catch(SQLException e) {
 			e.printStackTrace();
+		}finally {
+			try {
+				pstmt.close();
+				conn.close();
+			}catch(Exception e) {}
 		}
 		return deletedCount==1;
 	}
